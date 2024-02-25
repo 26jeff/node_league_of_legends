@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>League of Legend</title>
+</head>
+<body>
+    <form onsubmit="event.preventDefault(); sendChampion()">
+        <input type="text" name="champion">
+        <input type="text" name="type">
+        <button type="submit">Send</button>
+    </form>
+    <h1>League of Legends - Champions</h1>
+    <div id="champions"></div>
+    <script>
+        fetch('http://localhost:3000/champions')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                let champions = document.querySelector('#champions')
+                data.forEach(champion => {
+                    champions.innerHTML += `
+                        <a href='champion.html?id=${champion.id}'><li>${champion.name}</li><li>${champion.type}</li></a>
+                    `
+                })
+            })
+
+            const sendChampion = async () => {
+                event.preventDefault()
+                let champion = document.querySelector('input[name="champion"]').value 
+                let type = document.querySelector('input[name="type"]').value 
+
+                await fetch('http://localhost:3000/champions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({name: champion, type: type})
+                })
+
+                window.location.href = 'index.html'
+            }
+    </script>
+</body>
+</html>
